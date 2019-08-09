@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_usb_connection"
+        android:icon="@drawable/ic_usb_white_24dp"
+        android:title="@string/menu_usb_connection"
+        app:showAsAction="always"/>
+    <item android:id="@+id/menu_bt_connection"
+        android:icon="@drawable/ic_bluetooth_white_24dp"
+        android:title="@string/menu_bt_connection"
+        app:showAsAction="always"/>
+    <item android:id="@+id/menu_wifi_connection"
+        android:icon="@drawable/ic_wifi_white_24dp"
+        android:title="@string/menu_wifi_connection"
+        app:showAsAction="always"/>
+    <item android:id="@+id/menu_app_close"
+        android:title="@string/menu_close_app"
+        android:tooltipText="Close the app"
+        app:showAsAction="ifRoom"/>
+</menu>
