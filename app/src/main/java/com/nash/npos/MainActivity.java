@@ -1,19 +1,30 @@
 package com.nash.npos;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+
+import com.nash.usb_printer.USB_Printer;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "NPOS";
     private Context mContext;
     private int mConnectionId = -1;
+
+
+    private USB_Printer mPrinter;
+
+    Button mConnectBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +33,14 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = getApplicationContext();
 
+        mConnectBtn = findViewById(R.id.btn_connect);
+
+        mConnectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPrinter.printText("Hello\n");
+            }
+        });
     }
 
     @Override
@@ -45,23 +64,24 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     // Check for other connections, pop up a message, then turn On
                     if(!(ConnectionType.BT.isConnectionState() || ConnectionType.WIFI.isConnectionState())){
-                        // Enable BT Connection
+                        // Enable USBConnection
+                        mPrinter = USB_Printer.getInstance(mContext);
                         ConnectionType.USB.setConnectionState(true);
                         mConnectionId = 0;
                     }
                     else{
                         // Pop up message containing the current connection
                         if(ConnectionType.BT.isConnectionState()){
-                            Log.d(TAG, "Already connected to bluetooth Connection");
+                            Log.d(TAG, "Already connected to bluetooth USBConnection");
                         }
                         else if(ConnectionType.WIFI.isConnectionState()){
-                            Log.d(TAG, "Already connected to Wifi Connection");
+                            Log.d(TAG, "Already connected to Wifi USBConnection");
                         }
                     }
                 }
                 invalidateOptionsMenu();
                 Toast.makeText(getBaseContext(),
-                        "USB Connection",
+                        "USB USBConnection",
                         Toast.LENGTH_SHORT).show();
                 return true;
 
@@ -81,16 +101,16 @@ public class MainActivity extends AppCompatActivity {
                     else{
                         // Pop up message containing the current connection
                         if(ConnectionType.USB.isConnectionState()){
-                            Log.d(TAG, "Already connected to USB Connection");
+                            Log.d(TAG, "Already connected to USB USBConnection");
                         }
                         else if(ConnectionType.WIFI.isConnectionState()){
-                            Log.d(TAG, "Already connected to Wifi Connection");
+                            Log.d(TAG, "Already connected to Wifi USBConnection");
                         }
                     }
                 }
                 invalidateOptionsMenu();
                 Toast.makeText(mContext,
-                        "Bluetooth Connection",
+                        "Bluetooth USBConnection",
                         Toast.LENGTH_SHORT).show();
                 return true;
 
@@ -110,16 +130,16 @@ public class MainActivity extends AppCompatActivity {
                     else{
                         // Pop up message containing the current connection
                         if(ConnectionType.BT.isConnectionState()){
-                            Log.d(TAG, "Already connected to bluetooth Connection");
+                            Log.d(TAG, "Already connected to bluetooth USBConnection");
                         }
                         else if(ConnectionType.USB.isConnectionState()){
-                            Log.d(TAG, "Already connected to USB Connection");
+                            Log.d(TAG, "Already connected to USB USBConnection");
                         }
                     }
                 }
                 invalidateOptionsMenu();
                 Toast.makeText(mContext,
-                        "Wifi Connection",
+                        "Wifi USBConnection",
                         Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_app_close:
@@ -178,5 +198,87 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
         return true;
+    }
+
+    // USB Related Methods
+
+    //Device Disconnected Receiver
+    BroadcastReceiver mUsbReceiver1 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // TODO: Check for the custom VID and PID for the USB here
+            Toast.makeText(context.getApplicationContext(),"Device Disconnected!",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+    //Device connected Receiver
+    BroadcastReceiver mUsbReceiver2 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context.getApplicationContext(),"Device Connected!",
+                    Toast.LENGTH_SHORT).show();
+
+            if(mPrinter == null){
+                mPrinter = USB_Printer.getInstance(context);
+            }
+            else{
+                mPrinter.establishUSBConnection(context);
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mPrinter == null){
+            mPrinter = USB_Printer.getInstance(mContext);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "In onPause()");
+        Log.i(TAG, "Going to onStop()");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i(TAG, "In onStop()");
+        Log.i(TAG, "Going to onDestroy()");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i(TAG, "In onRestart()");
+        Log.i(TAG, "Going to onStart()");
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "In onStart()");
+        Log.i(TAG, "Going to onResume()");
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        if(mUsbReceiver1 != null || mUsbReceiver2 != null){
+            mContext.unregisterReceiver(mUsbReceiver1);
+            mContext.unregisterReceiver(mUsbReceiver2);
+        }
+        Log.i(TAG, "In onDestroy()");
+        Log.i(TAG, "Going to Activity Shutdown");
+
+        ConnectionType.USB.setConnectionState(false);
+        ConnectionType.BT.setConnectionState(false);
+        ConnectionType.WIFI.setConnectionState(false);
+
+        super.onDestroy();
     }
 }
