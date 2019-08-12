@@ -3,18 +3,1130 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/btn_connect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="@string/btn_connect"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Connect"
+        app:layout_constraintEnd_toStartOf="@+id/btn_command"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_command"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Test Command"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_connect"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_close"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_command" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_close"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/customborder">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+                <EditText
+                    android:id="@+id/sampleTextEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center"
+                    android:hint="Enter the text" />
+
+                <Button
+                    android:id="@+id/printButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Print" />
+
+                <Button
+                    android:id="@+id/lfCommandButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="LineFeed" />
+
+                <Button
+                    android:id="@+id/ffCommandButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="FormFeed" />
+
+                <Button
+                    android:id="@+id/pdpmButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="PDPM" />
+
+                <EditText
+                    android:id="@+id/pdff2fEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/pdff2fButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="PDFF2F" />
+
+                <EditText
+                    android:id="@+id/pdfnlEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/pdfnlButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="PDFNL" />
+
+                <EditText
+                    android:id="@+id/slfEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer"
+                    android:text="26" />
+
+                <Button
+                    android:id="@+id/slfButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="SLF" />
+
+                <EditText
+                    android:id="@+id/sgrscEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/sgrscButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="SGRSC" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/customborder"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup_FontType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:text="Font Type:"
+                            android:textSize="20sp" />
+
+                        <RadioButton
+                            android:id="@+id/font_A"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:onClick="RadioButtonFontTypeSelected"
+                            android:text="Font A"/>
+
+                        <RadioButton
+                            android:id="@+id/font_B"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="RadioButtonFontTypeSelected"
+                            android:text="Font B" />
+                    </RadioGroup>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_DoubleHeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Double Height"/>
+
+                        <CheckBox
+                            android:id="@+id/checkbox_DoubleWidth"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Double Width"/>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/sppmButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="Set parameter of print mode"
+                        android:text="SPPM" />
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/selFontEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value among (0,1,48,49)"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/selFontButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="Select the font"
+                    android:text="Select Font" />
+
+                <!--Button
+                android:id="@+id/selCharCodeTableButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Select character code table"
+                android:text="Sel Char Code Table" />
+
+            <Button
+                android:id="@+id/specifyDownldCharButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Specify download character"
+                android:text="Specify Downld Char" />
+            <EditText
+                android:id="@+id/setOrUnsetDCSetEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:numeric="integer"
+                android:hint="Enter value either 0 or 1" />
+            <Button
+                android:id="@+id/setOrUnsetDCSetButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Set or unset download set"
+                android:text="Set/Unset Download Char Set" /-->
+
+                <Button
+                    android:id="@+id/pageModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Page Mode" />
+
+                <Button
+                    android:id="@+id/standardModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Standard Mode" />
+
+                <Button
+                    android:id="@+id/horizontalTabButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="HT" />
+
+                <EditText
+                    android:id="@+id/setLeftMarginEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/setLeftMarginButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set Left Side Margin" />
+
+                <EditText
+                    android:id="@+id/setWidthOfPrintAreaEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/setWidthOfPrintAreaButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set width of print area" />
+
+                <EditText
+                    android:id="@+id/spapmxaxisEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(x - axis)Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <EditText
+                    android:id="@+id/spapmyaxisEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(y - axis)Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <EditText
+                    android:id="@+id/spapmxlengthEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(x - Length)Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <EditText
+                    android:id="@+id/spapmylengthEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(y - Length)Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/specifyPrintAreaOnPageModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Specify the print area on page mode" />
+
+                <EditText
+                    android:id="@+id/setPhysicalPositionEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/setPhysicalPositionButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set the physical position" />
+
+                <EditText
+                    android:id="@+id/setLogicalPositionEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/setLogicalPositionButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set the logical position" />
+
+                <EditText
+                    android:id="@+id/setVPPOnPageModeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/setVPPOnPageModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set the vertically physical position on page mode" />
+
+                <EditText
+                    android:id="@+id/setVLPOnPageModeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 576"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/setVLPOnPageModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set the vertically logical position on page mode" />
+
+                <Button
+                    android:id="@+id/printBitImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Print Bit Image" />
+
+                <EditText
+                    android:id="@+id/modeOfRasterBitEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(m) Enter value between 0 - 3"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/printRasterBitImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Print Raster Bit Image" />
+
+                <EditText
+                    android:id="@+id/selectPNVBitEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(Select) Enter value between 1 - 255"
+                    android:numeric="integer" />
+
+                <EditText
+                    android:id="@+id/modePNVBitEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(Mode) Enter value between 0 - 3"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/printNVBitImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Print NV Bit Image" />
+
+                <EditText
+                    android:id="@+id/selectSNVBitEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(Select) Enter value between 1 - 255"
+                    android:numeric="integer" />
+
+                <EditText
+                    android:id="@+id/modeSNVBitEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(Mode) Enter value between 4 - 7"
+                    android:numeric="integer" />
+
+                <EditText
+                    android:id="@+id/offsetSNVBitEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(Offset) Enter value between 0 - 255"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/selectNVBitImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Select NV Bit Image" />
+
+                <EditText
+                    android:id="@+id/numberOfNVBitImagesEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="(n) Enter value between 0 - 255"
+                    android:numeric="integer" />
+
+                <Button
+                    android:id="@+id/defineNVBitImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Define NV Bit Image" />
+
+                <EditText
+                    android:id="@+id/selectLSB_MSBDirInImgEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer"
+                    android:text="1" />
+
+                <Button
+                    android:id="@+id/selectLSB_MSBDirInImgButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Select LSB-MSB direction in image" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/customborder"
+                    android:orientation="vertical">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/setPosHRICharEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:hint="Enter value must be in between 0-3"
+                            android:numeric="integer"
+                            android:text="0" />
+
+                        <Button
+                            android:id="@+id/setPosHRICharButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="Set print position of HRI Characters" />
+
+                        <EditText
+                            android:id="@+id/selectHRICharSizeEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:hint="Enter value either 0 or 1"
+                            android:numeric="integer"
+                            android:orientation="vertical"
+                            android:text="0" />
+
+                        <Button
+                            android:id="@+id/selectHRICharSizeButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:orientation="horizontal"
+                            android:text="Select HRI Character size" />
+
+                        <EditText
+                            android:id="@+id/setBarcodeHeightEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:hint="Enter value between 0 - 255"
+                            android:numeric="integer"
+                            android:orientation="horizontal"
+                            android:text="162" />
+
+                        <Button
+                            android:id="@+id/setBarcodeHeightButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:orientation="horizontal"
+                            android:text="Set Barcode Height" />
+
+                        <EditText
+                            android:id="@+id/setBarcodeWidthEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:hint="Enter value between 2-6"
+                            android:numeric="integer"
+                            android:orientation="horizontal"
+                            android:text="3" />
+
+                        <Button
+                            android:id="@+id/setBarcodeWidthButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:orientation="horizontal"
+                            android:text="Set Barcode width" />
+
+                        <EditText
+                            android:id="@+id/setNWAspectOfBarcodeEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:hint="Enter value between 0 - 2"
+                            android:numeric="integer"
+                            android:orientation="horizontal"
+                            android:text="1" />
+
+                        <Button
+                            android:id="@+id/setNWAspectOfBarcodeButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:orientation="horizontal"
+                            android:text="Set N:W aspect of the barcode" />
+
+                        <Spinner
+                            android:id="@+id/spinner_barcode_types"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/colorAccent"
+                            android:spinnerMode="dialog"></Spinner>
+
+                        <EditText
+                            android:id="@+id/barcodeDataEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:hint="Enter Barcode data"></EditText>
+
+                        <Button
+                            android:id="@+id/printBarcodeButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:orientation="horizontal"
+                            android:text="Barcode" />
+                    </TableLayout>
+                </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/initializePrinterButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Initialize Printer" />
+
+                <EditText
+                    android:id="@+id/setPrintDensityEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 65 - 135"
+                    android:numeric="integer"
+                    android:text="100" />
+
+                <Button
+                    android:id="@+id/setPrintDensityButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set print density" />
+
+                <Button
+                    android:id="@+id/gsMFButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Cue Marked Form" />
+
+                <Button
+                    android:id="@+id/cutFormButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Cut Form" />
+
+                <EditText
+                    android:id="@+id/gslEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/infoSysTimeHostButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Inform system time of the host" />
+
+                <EditText
+                    android:id="@+id/ffinPixelsEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/ffinPixelsButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="FF Pixels" />
+
+                <EditText
+                    android:id="@+id/underLineEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 2"
+                    android:numeric="integer"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/underLineButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Turn UnderLine Mode On/Off" />
+
+                <Button
+                    android:id="@+id/setDefaultLineSpaceButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Set Default Line Spacing" />
+
+                <EditText
+                    android:id="@+id/turnEmphasizedOnOffEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/turnEmphasizedOnOffButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Turn Emphasized mode On/Off" />
+
+                <EditText
+                    android:id="@+id/selectPrintDirInPageModeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 3"
+                    android:numeric="integer"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/selectPrintDirInPageModeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Select Print Direction Page Mode" />
+
+                <EditText
+                    android:id="@+id/selectJustificationEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 2"
+                    android:numeric="integer"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/selectJustificationButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Select Justification" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/customborder"
+                    android:orientation="vertical">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup_QRType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Level:"
+                            android:textSize="20sp" />
+
+
+                        <RadioButton
+                            android:id="@+id/qr_L"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:onClick="RadioButtonQRTypeSelected"
+                            android:text="L" />
+
+                        <RadioButton
+                            android:id="@+id/qr_M"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="RadioButtonQRTypeSelected"
+                            android:text="M" />
+
+                        <RadioButton
+                            android:id="@+id/qr_Q"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="RadioButtonQRTypeSelected"
+                            android:text="Q" />
+
+                        <RadioButton
+                            android:id="@+id/qr_H"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="RadioButtonQRTypeSelected"
+                            android:text="H" />
+                    </RadioGroup>
+
+                    <EditText
+                        android:id="@+id/qrSizeEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:hint="(QR Size) Enter value between 0 - 255"
+                        android:numeric="integer"
+                        android:text="0" />
+
+                    <EditText
+                        android:id="@+id/qrUserDataEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:gravity="center"
+                        android:hint="(QR Data) Enter the QR data" />
+
+                    <Button
+                        android:id="@+id/qrCodeButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="4"
+                        android:text="Print QR Code" />
+                </LinearLayout>
+
+                <!--EditText
+                android:id="@+id/printDownldBitImgEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:numeric="integer"
+                android:hint="Enter value between 0 - 3" />
+
+            <Button
+                android:id="@+id/printDownldBitImgButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Print Downloaded Bit Image " /-->
+
+                <EditText
+                    android:id="@+id/turnBlackWhiteRevPrintModeOnOffEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="Enter value between 0 - 255"
+                    android:numeric="integer"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/turnBlackWhiteRevPrintModeOnOffButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Turn white/black reverse print mode on/off" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/customborder"
+                    android:orientation="vertical">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup_FunctionType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="Function Type: "
+                            android:textSize="20sp" />
+
+                        <RadioButton
+                            android:id="@+id/FT_a"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:onClick="RadioButtonFuncTypeSelected"
+                            android:text="A" />
+
+                        <RadioButton
+                            android:id="@+id/FT_b"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="RadioButtonFuncTypeSelected"
+                            android:text="B" />
+
+                        <RadioButton
+                            android:id="@+id/FT_c"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="RadioButtonFuncTypeSelected"
+                            android:text="C" />
+                    </RadioGroup>
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup_CutType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="Cut Type: "
+                            android:textSize="20sp" />
+
+                        <RadioButton
+                            android:id="@+id/full_cut"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:onClick="RadioButtonCutTypeSelected"
+                            android:text="Full Cut" />
+
+                        <RadioButton
+                            android:id="@+id/partial_cut"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="RadioButtonCutTypeSelected"
+                            android:text="Partial Cut" />
+                    </RadioGroup>
+
+                    <EditText
+                        android:id="@+id/selectCutModeCutPaperEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:gravity="center"
+                        android:hint="Enter value between 0 - 255"
+                        android:numeric="integer"
+                        android:text="0" />
+
+                    <Button
+                        android:id="@+id/selectCutModeCutPaperButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="4"
+                        android:gravity="center"
+                        android:text="Select cut mode and cut paper" />
+                </LinearLayout>
+
+                <Spinner
+                    android:id="@+id/spinner_vendorrequesttypes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dialog"/>
+
+                <Button
+                    android:id="@+id/controlTransferButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Control Transfer" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/customborder"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/pdf417Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="PDF417 Demo" />
+
+                </LinearLayout>
+            </TableLayout>
+        </ScrollView>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

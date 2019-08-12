@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">USB_Printer</string>
+    <string-array name="barcode_types">
+        <item>UPC-A</item>
+        <item>UPC-E</item>
+        <item>JAN13</item>
+        <item>JAN8</item>
+        <item>CODE39</item>
+        <item>ITF</item>
+        <item>CODABAR</item>
+        <item>CODE93</item>
+        <item>CODE128</item>
+    </string-array>
+    <string-array name="vendor_request_types">
+        <item>Reply Printer Status</item>
+        <item>Reset Printer</item>
+    </string-array>
+</resources>
