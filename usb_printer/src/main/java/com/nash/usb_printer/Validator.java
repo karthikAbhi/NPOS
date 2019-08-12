@@ -2,12 +2,37 @@ package com.nash.usb_printer;
 
 import android.util.Log;
 
+import java.io.StringReader;
 import java.util.regex.Pattern;
 
 public class Validator {
 
     public Validator() {
     }
+
+    /**
+     * Remove Carriage Return character(\r)
+     * @param dataToPrintInBytes
+     * @return
+     */
+    public static String cleanData(String dataToPrintInBytes) {
+
+        String tmp = dataToPrintInBytes;
+
+        while(tmp.contains("\r")){
+
+            int pos = tmp.indexOf("\r");
+
+            if(pos != -1){
+                StringBuilder sb = new StringBuilder(tmp);
+                sb.deleteCharAt(pos);
+                tmp = sb.toString();
+            }
+        }
+        dataToPrintInBytes = tmp;
+        return dataToPrintInBytes;
+    }
+
 
     public boolean check(String n, int minBound, int maxBound) {
         try{
@@ -51,7 +76,7 @@ public class Validator {
         }
         else if(barcodeType.equals(BarcodeType.CODE39)){
             if((userInput.length() > 0) &&
-                    Pattern.matches("^[0-9$%+=./A-Z\\- ]*$", userInput)){
+                    Pattern.matches("^[$%+=./\\- 0-9A-Z]*$", userInput)){
                 return true;
             }
         }

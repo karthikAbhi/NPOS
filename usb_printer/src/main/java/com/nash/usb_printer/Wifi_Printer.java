@@ -46,7 +46,13 @@ public class Wifi_Printer extends Printer {
 
     @Override
     public void printText(String s) throws NullPointerException {
-        sendCommand(s.getBytes());
+        transfer(s.getBytes());
+    }
+
+    @Override
+    public String transfer(byte[] dataToPrintInBytes) {
+        new advancedSendCommandATask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataToPrintInBytes);
+        return null; // TODO: Check this out
     }
 
     @Override
@@ -77,10 +83,6 @@ public class Wifi_Printer extends Printer {
                     e.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void sendCommand(byte[] bytes) {
-        new advancedSendCommandATask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, bytes);
     }
 
     private class createSocket extends AsyncTask<Void, Boolean, String>{

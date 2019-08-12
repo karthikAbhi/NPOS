@@ -1,17 +1,24 @@
 package com.nash.usb_printer;
 
 public enum CODE128Subset {
-    SUBSETA(103),
-    SUBSETB(104),
-    SUBSETC(105);
+
+    SUBSETA(0, 103),
+    SUBSETB(1, 104),
+    SUBSETC(2, 105);
 
     private int subset;
+    private int index;
 
-    CODE128Subset(int subset) {
-        this.subset = subset;
+    public int getIndex() {
+        return this.index;
     }
 
     public int getSubset() {
-        return subset;
+        return this.subset;
+    }
+
+    CODE128Subset(int index, int subset) {
+        this.subset = subset;
+        this.index = index;
     }
 }

@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Move this to Bluetooth printer
     private void initBT() {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -401,4 +402,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onDestroy();
     }
+
+
 }

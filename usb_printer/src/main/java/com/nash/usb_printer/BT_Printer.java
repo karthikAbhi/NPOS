@@ -46,12 +46,13 @@ public class BT_Printer extends Printer {
     }
 
     @Override
-    public void printText(String s) throws NullPointerException {
+    public String transfer(byte[] dataToPrintInBytes) {
         try {
-            mConnectThread.writeData(s.getBytes());
+            mConnectThread.writeData(dataToPrintInBytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null; // TODO: Check this out
     }
 
     @Override
