@@ -30,7 +30,7 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class USB_Printer {
+public class USB_Printer extends Printer {
 
     private static USB_Printer myPrinter; // Singleton Design Pattern
 
@@ -74,11 +74,11 @@ public class USB_Printer {
         mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         context.registerReceiver(mUsbReceiver, mFilter);
-        establishUSBConnection(context);
+        establishConnection(context);
 
     }
 
-    public void establishUSBConnection(Context context){
+    public void establishConnection(Context context){
 
         context.registerReceiver(mUsbReceiver, mFilter);
 
@@ -160,6 +160,14 @@ public class USB_Printer {
         }
     };
 
+    public void closeConnection(){
+        try{
+            mConnection.close();
+        } catch (Exception e){
+            Log.e("Close USB Connection", e.getMessage());
+        }
+    }
+
     public void printText(String dataToPrint){transfer(dataToPrint);}
 
     //Convert to Byte array
@@ -211,6 +219,9 @@ public class USB_Printer {
                 }
         }catch(NullInterfaceException e){
             Log.e("MyPrinter","Null Interface Exception"+ e.getMessage());
+        }
+        catch (Exception e){
+            Log.e("MyPrinter", e.getMessage());
         }
     }
     /**
