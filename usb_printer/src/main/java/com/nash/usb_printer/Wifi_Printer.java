@@ -46,7 +46,7 @@ public class Wifi_Printer extends Printer {
 
     @Override
     public void printText(String s) throws NullPointerException {
-        new advancedSendCommandATask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, s.getBytes());
+        sendCommand(s.getBytes());
     }
 
     @Override
