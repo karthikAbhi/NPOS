@@ -1,8 +1,12 @@
 package com.nash.npos;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.nash.usb_printer.BTReceiver;
+import com.nash.usb_printer.BT_Printer;
 import com.nash.usb_printer.Printer;
 import com.nash.usb_printer.USBReceiver;
 import com.nash.usb_printer.USB_Printer;
@@ -23,6 +29,7 @@ import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "NPOS";
+    private static final int REQUEST_ENABLE_BT = 1;
     private Context mContext;
     private int mConnectionId = -1;
 
@@ -30,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private Printer mPrinter;
 
     Button mConnectBtn;
+
+    private BluetoothAdapter mBluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_usb_connection:
                 if(ConnectionType.USB.isConnectionState() == true){
                     // Turn Off
-                    mPrinter.closeConnection();
+                    //mPrinter.closeConnection();
                     mPrinter = null;
                     ConnectionType.USB.setConnectionState(false);
                     unregisterReceiver(mUSBReceiver);
@@ -79,11 +88,11 @@ public class MainActivity extends AppCompatActivity {
                     if(!(ConnectionType.BT.isConnectionState() || ConnectionType.WIFI.isConnectionState())){
                         // Enable USBConnection
 
-                        IntentFilter intentFilter = new IntentFilter();
-                        intentFilter.addAction(ACTION_USB_DEVICE_DETACHED);
-                        intentFilter.addAction(ACTION_USB_DEVICE_ATTACHED);
+                        IntentFilter intentFilterUSB = new IntentFilter();
+                        intentFilterUSB.addAction(ACTION_USB_DEVICE_DETACHED);
+                        intentFilterUSB.addAction(ACTION_USB_DEVICE_ATTACHED);
 
-                        registerReceiver(mUSBReceiver, intentFilter);
+                        registerReceiver(mUSBReceiver, intentFilterUSB);
 
                         mPrinter = USB_Printer.getInstance(mContext);
 
@@ -109,14 +118,19 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_bt_connection:
                 if(ConnectionType.BT.isConnectionState() == true){
                     // Turn Off
+                    mPrinter.closeConnection();
                     mPrinter = null;
                     ConnectionType.BT.setConnectionState(false);
+                    unregisterReceiver(mBTReceiver);
                     //mConnectionId = -1;
                 }
                 else{
                     // Check for other connections, pop up a message, then turn On
                     if(!(ConnectionType.USB.isConnectionState() || ConnectionType.WIFI.isConnectionState())){
                         // Enable BT Connection
+                        initBT();
+
+                        mPrinter = BT_Printer.getInstance(getApplicationContext(), "NPOS820");
                         ConnectionType.BT.setConnectionState(true);
                         mConnectionId = 1;
                     }
@@ -174,6 +188,62 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void initBT() {
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (mBluetoothAdapter == null) {
+            // Device doesn't support Bluetooth
+            Toast.makeText(getApplicationContext(),
+                    "Device doesn't support bluetooth connectivity",
+                    Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "No bluetooth support for this device");
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Device support bluetooth connectivity",
+                    Toast.LENGTH_SHORT).show();
+
+            if (!mBluetoothAdapter.isEnabled()) {
+                Log.i(TAG, "Bluetooth off... Turning on now...");
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            } else {
+                Log.i(TAG, "Bluetooth is already turned on...");
+            }
+        }
+
+        // Register IntentFilter
+        IntentFilter intentFilterBT = new IntentFilter();
+        intentFilterBT.addAction(BluetoothDevice.ACTION_FOUND);
+        intentFilterBT.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        intentFilterBT.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        intentFilterBT.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        intentFilterBT.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(mBTReceiver, intentFilterBT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_ENABLE_BT){
+            Log.i("Info","Request code correct");
+
+            if(resultCode == RESULT_OK){
+                Log.i("Info","Result code correct");
+                Toast.makeText(getApplicationContext(),"Bluetooth State: On",
+                        Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Log.i("Info","Result code incorrect");
+                Toast.makeText(getApplicationContext(),"Bluetooth State: Off",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+        else{
+            Log.i("Info","Improper request code");
         }
     }
 
@@ -246,6 +316,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    // BT Related Methods
+
+    BTReceiver mBTReceiver = new BTReceiver(){
+
+        @Override
+        public void disconnect() {
+            mPrinter.closeConnection();
+        }
+
+        @Override
+        public void connect() {
+            if(mPrinter == null){
+                mPrinter = BT_Printer.getInstance(getApplicationContext(), "NPOS820");
+            }
+            else{
+                mPrinter.establishConnection(getApplicationContext());
+            }
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -302,6 +392,7 @@ public class MainActivity extends AppCompatActivity {
             ConnectionType.USB.setConnectionState(false);
         }
         if(ConnectionType.BT.isConnectionState()){
+            unregisterReceiver(mBTReceiver);
             ConnectionType.BT.setConnectionState(false);
         }
         if(ConnectionType.WIFI.isConnectionState()){
