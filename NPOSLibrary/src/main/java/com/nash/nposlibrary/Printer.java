@@ -35,10 +35,10 @@ public abstract class Printer {
     private Context mContext;
     private int nCurrentSubset = 0;
 
-    private String mReceivedDataFromPrinter;
+    private byte[] mReceivedDataFromPrinter;
 
     // Getter Method for Received Data from Printer
-    public String getReceivedDataFromPrinter() {
+    public byte[] getReceivedDataFromPrinter() {
         return mReceivedDataFromPrinter;
     }
 
@@ -61,7 +61,7 @@ public abstract class Printer {
     }
 
     //Process User Input Transfer
-    public abstract String transfer(final byte[] dataToPrintInBytes); // Imp
+    public abstract byte[] transfer(final byte[] dataToPrintInBytes); // Imp
 
     /**
      * Image Related methods
@@ -718,7 +718,7 @@ public abstract class Printer {
     /**
      * Vendor Requests (OR) Control Transfer
      */
-    public String controlTransfer(VendorRequest vendorRequest) {
+    public byte[] controlTransfer(VendorRequest vendorRequest) {
 
         //TODO: Need to implement, Ask Praveen for Document.
         byte[] sendCmd = new byte[8];

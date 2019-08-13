@@ -28,7 +28,7 @@ public class USB_Printer extends Printer {
     private static UsbManager mUsbManager;
     private static UsbDevice mDevice;
     private UsbInterface mInterface;
-    private UsbEndpoint mEndpoint;
+    private UsbEndpoint mBulkTransferEndpoint, mControlTransferEndpoint;
     private UsbDeviceConnection mConnection;
     private static String mUsbDevice = "";
     private static PendingIntent mPermissionIntent;
@@ -106,7 +106,7 @@ public class USB_Printer extends Printer {
                         if (device != null) {
                             //call method to set up device communication
                             mInterface = device.getInterface(0);
-                            mEndpoint = mInterface.getEndpoint(1);// 0 IN and  1 OUT to printer.
+                            mBulkTransferEndpoint = mInterface.getEndpoint(1);// 0 IN and  1 OUT to printer.
                             mConnection = mUsbManager.openDevice(device);
 
                             for (int i = 0; i < mInterface.getEndpointCount(); i++) {
@@ -120,10 +120,15 @@ public class USB_Printer extends Printer {
                                         //epIN = mInterface.getEndpoint(i);
                                         Log.i("Printer", "input stream found");
                                     }else {
-                                        mEndpoint = mInterface.getEndpoint(i);
+                                        mBulkTransferEndpoint = mInterface.getEndpoint(i);
                                         Log.i("Printer", "outstream found");
                                     }
-                                } else {
+                                }
+                                if (mInterface.getEndpoint(i).getType() == UsbConstants.USB_ENDPOINT_XFER_CONTROL){
+                                    Log.i("Printer", "Control Transfer Endpoint found");
+                                    mControlTransferEndpoint = mInterface.getEndpoint(i);
+                                }
+                                else {
                                     Log.i("Printer", "Not Bulk");
                                 }
                             }
@@ -163,7 +168,7 @@ public class USB_Printer extends Printer {
 
     //Process USB Bulk Transfer
     @Override
-    public String transfer(final byte[] dataToPrintInBytes){
+    public byte[] transfer(final byte[] dataToPrintInBytes){
 
         try{
             if(mInterface == null){
@@ -183,7 +188,7 @@ public class USB_Printer extends Printer {
                             @Override
                             public void run() {
 
-                                mConnection.bulkTransfer(mEndpoint,
+                                mConnection.bulkTransfer(mBulkTransferEndpoint,
                                         dataToPrintInBytes,
                                         dataToPrintInBytes.length,
                                         0);
@@ -202,7 +207,22 @@ public class USB_Printer extends Printer {
         catch (Exception e){
             Log.e("MyPrinter", e.getMessage());
         }
-
         return null; // TODO: Check this out
+    }
+
+    @Override
+    public byte[] controlTransfer(VendorRequest vendorRequest) {
+        //Read Buffer
+        byte[] buff = new byte[16];
+
+        mConnection.controlTransfer(0xC1,
+                vendorRequest.getbRequest(),
+                0,
+                0,
+                buff,
+                vendorRequest.getwLength(),
+                1000);
+
+        return buff;
     }
 }

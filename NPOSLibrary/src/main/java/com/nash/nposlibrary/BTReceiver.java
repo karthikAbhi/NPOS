@@ -20,25 +20,18 @@ public abstract class BTReceiver extends BroadcastReceiver {
 
         if(BluetoothDevice.ACTION_FOUND.equals(action)){
             //Device Found
-            if(device.equals("NPOS820")){
-                Log.i("BT", "Found");
-                Toast.makeText(context,"Device Found!",
-                        Toast.LENGTH_SHORT)
-                        .show();
-                //establishConnection(device);
 
-            }
         }
         else if(BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
             Log.i("BT", "ACTION_ACL_CONNECTED");
             Toast.makeText(context,"Action ACL Connected!",
                     Toast.LENGTH_SHORT).show();
 
-            if(device.getName().equals("NPOS820")){
+            /*if(device.getName().equals("NPOS820")){
                 Log.i("BT", "Found");
                 Toast.makeText(context,"Device Connected!",
                         Toast.LENGTH_SHORT).show();
-            }
+            }*/
         }
         else if(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
             Log.i("BT", "ACTION_ACL_DISCONNECT_REQUESTED");
@@ -49,14 +42,14 @@ public abstract class BTReceiver extends BroadcastReceiver {
             Log.i("BT", "ACTION_ACL_DISCONNECTED");
             Toast.makeText(context,"ACTION_ACL_DISCONNECTED",
                     Toast.LENGTH_SHORT).show();
-            if(device.getName().equals("NPOS820")){
+            /*if(device.getName().equals("NPOS820")){
                 if(device.equals("NPOS820")){
                     Log.i("BT", "Found");
                     Toast.makeText(context,
                             "Device Disconnected!\n" + "NPOS820", Toast.LENGTH_SHORT)
                             .show();
                 }
-            }
+            }*/
             disconnect();
         }
         else{

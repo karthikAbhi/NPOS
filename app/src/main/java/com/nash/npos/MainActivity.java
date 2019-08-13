@@ -4,13 +4,16 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +47,9 @@ import com.nash.nposlibrary.VendorRequest;
 import com.nash.nposlibrary.Wifi_Printer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Set;
 
 import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED;
 import static android.hardware.usb.UsbManager.ACTION_USB_DEVICE_DETACHED;
@@ -56,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private Context mContext;
     private int mConnectionId = -1;
 
-    private String mReceivedBuffer;
+    private byte[] mReceivedBuffer;
 
     private Printer mPrinter;
 
@@ -64,9 +69,14 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBluetoothAdapter;
 
+    private ArrayList<String> mBTDevices = new ArrayList<>();
+
+    ArrayAdapter<String> mBTAdapter;
+
+    AlertDialog.Builder mBuilder;
+
     // --- UI - Button References ---
 
-    private Button mCloseBTN, mDiscoverBTN;
     private Button mPrintButton;
     private Button mLFCommandButton;
     private Button mFFCommandButton;
@@ -187,11 +197,11 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = getApplicationContext();
 
-        mBtnConnect = findViewById(R.id.btn_connect);
-        mBtnCommand = findViewById(R.id.btn_command);
-        mBtnClose = findViewById(R.id.btn_close);
+        //mBtnConnect = findViewById(R.id.btn_connect);
+        //mBtnCommand = findViewById(R.id.btn_command);
+        //mBtnClose = findViewById(R.id.btn_close);
 
-        mBtnConnect.setOnClickListener(new View.OnClickListener() {
+        /*mBtnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mConnectionId == ConnectionType.USB.getTypeId()){
@@ -222,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mPrinter.closeConnection();
             }
-        });
+        });*/
 
 
         // --- UI Components - EditText Reference Creation ---
@@ -403,82 +413,109 @@ public class MainActivity extends AppCompatActivity {
 
         // --- IMPLEMENTATION ---
 
-
         //Basic Print Command
         mPrintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.printText(mSampleTextEditText.getText().toString());
+                try{
+                    if(mPrinter != null){
+                        mPrinter.printText(mSampleTextEditText.getText().toString());
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),
+                                "Connection is null",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
-
 
         mPDFF2FEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_J(mPDFF2FEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.ESC_J(mPDFF2FEditText.getText().toString());
+                }
             }
-        });//Print data and feed a line (14.01)
+        });
+        //Print data and feed a line (14.01)
         mLFCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.LF();
+                if(checkConnectionStatus()) {
+                    mPrinter.LF();
+                }
             }
         });
         //Print data and feed a page on page mode (14.02)
         mFFCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.FF();
+                if(checkConnectionStatus()){
+                    mPrinter.FF();
+                }
             }
         });
         //Print data on page mode (14.03)
         mPDPMCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_FF();
+                if(checkConnectionStatus()){
+                    mPrinter.ESC_FF();
+                }
             }
         });
         //Print data and feed the form to forward (14.04)
         mPDFF2FCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_J(mPDFF2FEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.ESC_J(mPDFF2FEditText.getText().toString());
+                }
             }
         });
         //Print data and feed n lines (14.05)
         mPDFNLCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_D(mPDFNLEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.ESC_D(mPDFNLEditText.getText().toString());
+                }
             }
         });
         mSLFCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_3(mSLFEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.ESC_3(mSLFEditText.getText().toString());
+                }
             }
         });
         mSGRSCCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_SP(mSGRSCEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.ESC_SP(mSGRSCEditText.getText().toString());
+                }
             }
         });
         //Need to implement parameters
         mSPPMCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(mRadioButtonFontType.getText().toString().equals("Font A")){
-                    mPrinter.ESC_PM(CharacterFontType.FONT_A,
-                            mCheckBoxDoubleHeight.isChecked(),
-                            mCheckBoxDoubleWidth.isChecked());
-                }
-                else if(mRadioButtonFontType.getText().toString().equals("Font B")){
-                    mPrinter.ESC_PM(CharacterFontType.FONT_B,
-                            mCheckBoxDoubleHeight.isChecked(),
-                            mCheckBoxDoubleWidth.isChecked());
+                if(checkConnectionStatus()){
+                    if (mRadioButtonFontType.getText().toString().equals("Font A")) {
+                        mPrinter.ESC_PM(CharacterFontType.FONT_A,
+                                mCheckBoxDoubleHeight.isChecked(),
+                                mCheckBoxDoubleWidth.isChecked());
+                    } else if (mRadioButtonFontType.getText().toString().equals("Font B")) {
+                        mPrinter.ESC_PM(CharacterFontType.FONT_B,
+                                mCheckBoxDoubleHeight.isChecked(),
+                                mCheckBoxDoubleWidth.isChecked());
+                    }
                 }
             }
         });
@@ -486,65 +523,82 @@ public class MainActivity extends AppCompatActivity {
         mSelectFontCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_M(mSelectFontEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.ESC_M(mSelectFontEditText.getText().toString());
+                }
             }
         });
         mPMCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.PAGE_MODE();
+                if(checkConnectionStatus()){
+                    mPrinter.PAGE_MODE();
+                }
             }
         });
 
         mSMCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.STANDARD_MODE();
+                if(checkConnectionStatus()){
+                    mPrinter.STANDARD_MODE();
+                }
             }
         });
         mHTCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.HT();
+                if(checkConnectionStatus()){
+                    mPrinter.HT();
+                }
             }
         });
         //Set the left side margin Command (14.16)
         mSetLeftMarginCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_L(mSetLeftMarginEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.GS_L(mSetLeftMarginEditText.getText().toString());
+                }
             }
         });
         //Set the width of print area Command (14.17)
         mSetWidthOfPrintAreaCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_W(mSetWidthOfPrintAreaEditText.getText().toString());
+                if(checkConnectionStatus()){
+                    mPrinter.GS_W(mSetWidthOfPrintAreaEditText.getText().toString());
+                }
             }
         });
         //Set the print area on page mode (14.18)
         mSpecifyPrintAreaOnPageModeCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                mPrinter.ESC_W(mSPAPMxaxisEditText.getText().toString(),
-                        mSPAPMyaxisEditText.getText().toString(),
-                        mSPAPMxlengthEditText.getText().toString(),
-                        mSPAPMylengthEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_W(mSPAPMxaxisEditText.getText().toString(),
+                            mSPAPMyaxisEditText.getText().toString(),
+                            mSPAPMxlengthEditText.getText().toString(),
+                            mSPAPMylengthEditText.getText().toString());
+                }
             }
         });
         //Set the physical position (14.19)
         mSetPhysicalPositionCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_PP(mSetPhysicalPositionEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_PP(mSetPhysicalPositionEditText.getText().toString());
+                }
             }
         });
         //Set the logical position (14.20)
         mSetLogicalPositionCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_LP(mSetLogicalPositionEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_LP(mSetLogicalPositionEditText.getText().toString());
+                }
             }
         });
         //Set the vertical physical position in page mode (14.21)
@@ -552,8 +606,10 @@ public class MainActivity extends AppCompatActivity {
                 setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mPrinter.GS_VPP(mSetVerticalPhysicalPositionOnPageModeEditText.
-                                getText().toString());
+                        if(checkConnectionStatus()) {
+                            mPrinter.GS_VPP(mSetVerticalPhysicalPositionOnPageModeEditText.
+                                    getText().toString());
+                        }
                     }
                 });
         //Set the vertical logical position on page mode (14.22)
@@ -561,15 +617,19 @@ public class MainActivity extends AppCompatActivity {
                 setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mPrinter.GS_VLP(mSetVerticalLogicalPositionOnPageModeEditText.
-                                getText().toString());
+                        if(checkConnectionStatus()) {
+                            mPrinter.GS_VLP(mSetVerticalLogicalPositionOnPageModeEditText.
+                                    getText().toString());
+                        }
                     }
                 });
         //Print bit image (14.23)
         mPrintBitImageCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pickBitImage();
+                if(checkConnectionStatus()) {
+                    pickBitImage();
+                }
             }
         });
 
@@ -577,24 +637,30 @@ public class MainActivity extends AppCompatActivity {
         mPrintRasterBitImageCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pickRasterBitImage();
+                if(checkConnectionStatus()) {
+                    pickRasterBitImage();
+                }
             }
         });
         //Print NV Bit Image (14.25)
         mPrintNVBitImageCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.FS_PP(mSelectPNVBitEditText.getText().toString(),
-                        mModePNVBitEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.FS_PP(mSelectPNVBitEditText.getText().toString(),
+                            mModePNVBitEditText.getText().toString());
+                }
             }
         });
         //Select NV Bit Image (14.25)
         mSelectNVBitImageCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.FS_PS(mSelectSNVBitEditText.getText().toString(),
-                        mModeSNVBitEditText.getText().toString(),
-                        mOffsetSNVBitEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.FS_PS(mSelectSNVBitEditText.getText().toString(),
+                            mModeSNVBitEditText.getText().toString(),
+                            mOffsetSNVBitEditText.getText().toString());
+                }
             }
         });
         //Define NV Bit Image (14.26)
@@ -621,8 +687,10 @@ public class MainActivity extends AppCompatActivity {
         mSelectLSB_MSBDirectionInImageCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.DC2_DIR(mSelectLSB_MSBDirectionInImageEditText.
-                        getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.DC2_DIR(mSelectLSB_MSBDirectionInImageEditText.
+                            getText().toString());
+                }
             }
         });
 
@@ -630,7 +698,9 @@ public class MainActivity extends AppCompatActivity {
         mSetPrintPositionOfHRICharCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_H(mSetPrintPositionOfHRICharEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.GS_H(mSetPrintPositionOfHRICharEditText.getText().toString());
+                }
             }
         });
 
@@ -638,7 +708,9 @@ public class MainActivity extends AppCompatActivity {
         mSelectHRICharacterSizeCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_F(mSelectHRICharacterSizeEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.GS_F(mSelectHRICharacterSizeEditText.getText().toString());
+                }
             }
         });
 
@@ -646,7 +718,9 @@ public class MainActivity extends AppCompatActivity {
         mSetBarcodeHeightCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_h(mSetBarcodeHeightEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.GS_h(mSetBarcodeHeightEditText.getText().toString());
+                }
             }
         });
 
@@ -654,7 +728,9 @@ public class MainActivity extends AppCompatActivity {
         mSetBarcodeWidthCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_w(mSetBarcodeWidthEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.GS_w(mSetBarcodeWidthEditText.getText().toString());
+                }
             }
         });
 
@@ -662,7 +738,9 @@ public class MainActivity extends AppCompatActivity {
         mSetNWAspectBarcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.DC2_ARB(mSetNWAspectBarcodeEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.DC2_ARB(mSetNWAspectBarcodeEditText.getText().toString());
+                }
             }
         });
 
@@ -688,38 +766,40 @@ public class MainActivity extends AppCompatActivity {
         mPrintBarcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(checkConnectionStatus()) {
 
-                switch (mBarcodeTypeSelected) {
-                    case 0:
-                        mPrinter.GS_k(BarcodeType.UPC_A, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 1:
-                        mPrinter.GS_k(BarcodeType.UPC_E, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 2:
-                        mPrinter.GS_k(BarcodeType.JAN13, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 3:
-                        mPrinter.GS_k(BarcodeType.JAN8, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 4:
-                        mPrinter.GS_k(BarcodeType.CODE39, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 5:
-                        mPrinter.GS_k(BarcodeType.ITF, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 6:
-                        mPrinter.GS_k(BarcodeType.CODABAR, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 7:
-                        mPrinter.GS_k(BarcodeType.CODE93, mBarcodeDataEditText.getText().toString());
-                        break;
-                    case 8:
-                        mPrinter.GS_k(BarcodeType.CODE128, mBarcodeDataEditText.getText().toString());
-                        break;
-                    default:
-                        mPrinter.GS_k(BarcodeType.UPC_A, mBarcodeDataEditText.getText().toString());
-                        break;
+                    switch (mBarcodeTypeSelected) {
+                        case 0:
+                            mPrinter.GS_k(BarcodeType.UPC_A, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 1:
+                            mPrinter.GS_k(BarcodeType.UPC_E, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 2:
+                            mPrinter.GS_k(BarcodeType.JAN13, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 3:
+                            mPrinter.GS_k(BarcodeType.JAN8, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 4:
+                            mPrinter.GS_k(BarcodeType.CODE39, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 5:
+                            mPrinter.GS_k(BarcodeType.ITF, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 6:
+                            mPrinter.GS_k(BarcodeType.CODABAR, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 7:
+                            mPrinter.GS_k(BarcodeType.CODE93, mBarcodeDataEditText.getText().toString());
+                            break;
+                        case 8:
+                            mPrinter.GS_k(BarcodeType.CODE128, mBarcodeDataEditText.getText().toString());
+                            break;
+                        default:
+                            mPrinter.GS_k(BarcodeType.UPC_A, mBarcodeDataEditText.getText().toString());
+                            break;
+                    }
                 }
             }
         });
@@ -728,7 +808,9 @@ public class MainActivity extends AppCompatActivity {
         mInitializePrinterCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_INIT();
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_INIT();
+                }
             }
         });
 
@@ -736,7 +818,9 @@ public class MainActivity extends AppCompatActivity {
         mSetPrintDensity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.DC2_PD(mSetPrintDensityEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.DC2_PD(mSetPrintDensityEditText.getText().toString());
+                }
             }
         });
 
@@ -746,7 +830,9 @@ public class MainActivity extends AppCompatActivity {
         mGSMFCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_MF();
+                if(checkConnectionStatus()) {
+                    mPrinter.GS_MF();
+                }
             }
         });
 
@@ -754,7 +840,9 @@ public class MainActivity extends AppCompatActivity {
         mCutFormCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_I();
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_I();
+                }
             }
         });
 
@@ -762,15 +850,18 @@ public class MainActivity extends AppCompatActivity {
         mInformSysTimeOfHostCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] a = new byte[6];
-                a[0] = (byte) Calendar.getInstance().get(Calendar.SECOND);//d1 - second
-                a[1] = (byte) Calendar.getInstance().get(Calendar.MINUTE);//d2 - minute
-                a[2] = (byte) Calendar.getInstance().get(Calendar.HOUR);//d3 - hour
-                a[3] = (byte) Calendar.getInstance().get(Calendar.DAY_OF_MONTH);//d4 - day
-                a[4] = (byte) Calendar.getInstance().get(Calendar.MONTH);//d5 - month
-                a[5] = (byte) Calendar.getInstance().get(Calendar.YEAR);//d6 - year
+                if(checkConnectionStatus()) {
+                    byte[] a = new byte[6];
 
-                mPrinter.GS_i(a);
+                    a[0] = (byte) Calendar.getInstance().get(Calendar.SECOND);//d1 - second
+                    a[1] = (byte) Calendar.getInstance().get(Calendar.MINUTE);//d2 - minute
+                    a[2] = (byte) Calendar.getInstance().get(Calendar.HOUR);//d3 - hour
+                    a[3] = (byte) Calendar.getInstance().get(Calendar.DAY_OF_MONTH);//d4 - day
+                    a[4] = (byte) Calendar.getInstance().get(Calendar.MONTH);//d5 - month
+                    a[5] = (byte) Calendar.getInstance().get(Calendar.YEAR);//d6 - year
+
+                    mPrinter.GS_i(a);
+                }
             }
         });
 
@@ -780,7 +871,9 @@ public class MainActivity extends AppCompatActivity {
         mFFIPIXELSCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_d(mFFIPIXELSEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.GS_d(mFFIPIXELSEditText.getText().toString());
+                }
             }
         });
 
@@ -788,14 +881,18 @@ public class MainActivity extends AppCompatActivity {
         mtUOnOffCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_hyphen(mUnderLineEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_hyphen(mUnderLineEditText.getText().toString());
+                }
             }
         });
         //Select default line spacing (14.71)
         mSDLSCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_2();
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_2();
+                }
             }
         });
 
@@ -803,7 +900,9 @@ public class MainActivity extends AppCompatActivity {
         mTEMOnOffCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_E(mTEMOnOffEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_E(mTEMOnOffEditText.getText().toString());
+                }
             }
         });
 
@@ -811,7 +910,9 @@ public class MainActivity extends AppCompatActivity {
         mSPDPMCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_T(mSPDPMEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_T(mSPDPMEditText.getText().toString());
+                }
             }
         });
 
@@ -819,7 +920,9 @@ public class MainActivity extends AppCompatActivity {
         mSJCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.ESC_a(mSJEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.ESC_a(mSJEditText.getText().toString());
+                }
             }
         });
 
@@ -829,18 +932,20 @@ public class MainActivity extends AppCompatActivity {
         mQRCodeCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mRadioButtonQR.getText().toString().equals("L")) {
-                    mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.L,
-                            mQRUserDataEditText.getText().toString());
-                } else if (mRadioButtonQR.getText().toString().equals("M")) {
-                    mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.M,
-                            mQRUserDataEditText.getText().toString());
-                } else if (mRadioButtonQR.getText().toString().equals("Q")) {
-                    mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.Q,
-                            mQRUserDataEditText.getText().toString());
-                } else if (mRadioButtonQR.getText().toString().equals("H")) {
-                    mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.H,
-                            mQRUserDataEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    if (mRadioButtonQR.getText().toString().equals("L")) {
+                        mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.L,
+                                mQRUserDataEditText.getText().toString());
+                    } else if (mRadioButtonQR.getText().toString().equals("M")) {
+                        mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.M,
+                                mQRUserDataEditText.getText().toString());
+                    } else if (mRadioButtonQR.getText().toString().equals("Q")) {
+                        mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.Q,
+                                mQRUserDataEditText.getText().toString());
+                    } else if (mRadioButtonQR.getText().toString().equals("H")) {
+                        mPrinter.QrCode(mQRSizeEditText.getText().toString(), QRErrCorrLvl.H,
+                                mQRUserDataEditText.getText().toString());
+                    }
                 }
             }
         });
@@ -849,7 +954,9 @@ public class MainActivity extends AppCompatActivity {
         mTurnWBRPOnOffCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.GS_B(mTurnWBRPOnOffEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    mPrinter.GS_B(mTurnWBRPOnOffEditText.getText().toString());
+                }
             }
         });
 
@@ -857,21 +964,23 @@ public class MainActivity extends AppCompatActivity {
         mSCMCPCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mRadioButtonCT.getText().toString().equals("Full Cut")) {
-                    if (mRadioButtonFT.getText().toString().equals("A")) {
-                        mPrinter.GS_V(FunctionType.A, CutCommand.FULLCUT, mSCMCPEditText.getText().toString());
-                    } else if (mRadioButtonFT.getText().toString().equals("B")) {
-                        mPrinter.GS_V(FunctionType.B, CutCommand.FULLCUT, mSCMCPEditText.getText().toString());
-                    } else if (mRadioButtonFT.getText().toString().equals("C")) {
-                        mPrinter.GS_V(FunctionType.C, CutCommand.FULLCUT, mSCMCPEditText.getText().toString());
-                    }
-                } else if (mRadioButtonCT.getText().toString().equals("Partial Cut")) {
-                    if (mRadioButtonFT.getText().toString().equals("A")) {
-                        mPrinter.GS_V(FunctionType.A, CutCommand.PARTIALCUT, mSCMCPEditText.getText().toString());
-                    } else if (mRadioButtonFT.getText().toString().equals("B")) {
-                        mPrinter.GS_V(FunctionType.B, CutCommand.PARTIALCUT, mSCMCPEditText.getText().toString());
-                    } else if (mRadioButtonFT.getText().toString().equals("C")) {
-                        mPrinter.GS_V(FunctionType.C, CutCommand.PARTIALCUT, mSCMCPEditText.getText().toString());
+                if(checkConnectionStatus()) {
+                    if (mRadioButtonCT.getText().toString().equals("Full Cut")) {
+                        if (mRadioButtonFT.getText().toString().equals("A")) {
+                            mPrinter.GS_V(FunctionType.A, CutCommand.FULLCUT, mSCMCPEditText.getText().toString());
+                        } else if (mRadioButtonFT.getText().toString().equals("B")) {
+                            mPrinter.GS_V(FunctionType.B, CutCommand.FULLCUT, mSCMCPEditText.getText().toString());
+                        } else if (mRadioButtonFT.getText().toString().equals("C")) {
+                            mPrinter.GS_V(FunctionType.C, CutCommand.FULLCUT, mSCMCPEditText.getText().toString());
+                        }
+                    } else if (mRadioButtonCT.getText().toString().equals("Partial Cut")) {
+                        if (mRadioButtonFT.getText().toString().equals("A")) {
+                            mPrinter.GS_V(FunctionType.A, CutCommand.PARTIALCUT, mSCMCPEditText.getText().toString());
+                        } else if (mRadioButtonFT.getText().toString().equals("B")) {
+                            mPrinter.GS_V(FunctionType.B, CutCommand.PARTIALCUT, mSCMCPEditText.getText().toString());
+                        } else if (mRadioButtonFT.getText().toString().equals("C")) {
+                            mPrinter.GS_V(FunctionType.C, CutCommand.PARTIALCUT, mSCMCPEditText.getText().toString());
+                        }
                     }
                 }
             }
@@ -882,19 +991,9 @@ public class MainActivity extends AppCompatActivity {
         mPrintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.printText(mSampleTextEditText.getText().toString());
-                //printer.printAdditionalBarcode(ExtraBarcodeType.CODE128, "500", "300",
-                //       "0905", ImageMode.NORMAL);
-                //TODO: UI
-                /*printer.printPDF417("5","24",
-                        PDF417ErrorCorrectionMode.LEVEL,
-                        PDF417ErrorCorrectionLevel.LEVEL0,
-                        PDF417Options.STANDARD,
-                        "Hello there.. Karthik");*/
-
-                //printer.code93(BarcodeType.CODE93,"ABCDEFG");
-                //printer.code128(BarcodeType.CODE128,mSampleTextEditText.getText().toString(),
-                //CODE128Subset.SUBSETC);
+                if(checkConnectionStatus()) {
+                    mPrinter.printText(mSampleTextEditText.getText().toString());
+                }
             }
         });
 
@@ -902,12 +1001,14 @@ public class MainActivity extends AppCompatActivity {
         mPDF417CommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPrinter.printPDF417("5",
+                if(checkConnectionStatus()) {
+                    mPrinter.printPDF417("5",
                         "18",
                         PDF417ErrorCorrectionMode.LEVEL,
                         PDF417ErrorCorrectionLevel.LEVEL0,
                         PDF417Options.STANDARD,
                         mSampleTextEditText.getText().toString());
+                }
             }
         });
 
@@ -915,28 +1016,51 @@ public class MainActivity extends AppCompatActivity {
         mControlTransferButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch(mVendorRequestTypeSelected){
-                    case 0:
-                        mReceivedBuffer = mPrinter.controlTransfer(VendorRequest.REPLY_PRINTER_STATUS);
-                        break;
-                    case 1:
-                        mReceivedBuffer = mPrinter.controlTransfer(VendorRequest.RESET_PRINTER);
-                        break;
-                    default:
-                        Toast.makeText(getApplicationContext(),
-                                "Select Vendor Request type..",
-                                Toast.LENGTH_SHORT).show();
+                if(checkConnectionStatus()) {
+                    switch (mVendorRequestTypeSelected) {
+                        case 0:
+                            mReceivedBuffer = mPrinter.controlTransfer(VendorRequest.REPLY_PRINTER_STATUS);
+                            break;
+                        case 1:
+                            mReceivedBuffer = mPrinter.controlTransfer(VendorRequest.RESET_PRINTER);
+                            break;
+                        default:
+                            Toast.makeText(getApplicationContext(),
+                                    "Select Vendor Request type..",
+                                    Toast.LENGTH_SHORT).show();
+                    }
+                    //TODO: Parse the string using String.toBytes to get all the individual byte data.
+                    Toast.makeText(getApplicationContext(),
+                            "1st Byte: " + mReceivedBuffer[0] + "\n" +
+                                    "2nd Byte: " + mReceivedBuffer[1] + "\n" +
+                                    "3rd Byte: " + mReceivedBuffer[2] + "\n" +
+                                    "4th Byte: " + mReceivedBuffer[3] + "\n" +
+                                    "5th Byte: " + mReceivedBuffer[4] + "\n" +
+                                    "6th Byte: " + mReceivedBuffer[5] + "\n" +
+                                    "7th Byte: " + mReceivedBuffer[6] + "\n" +
+                                    "8th Byte: " + mReceivedBuffer[7] + "\n" +
+                                    "9th Byte: " + mReceivedBuffer[8] + "\n" +
+                                    "10th Byte: " + mReceivedBuffer[9],
+                            Toast.LENGTH_LONG).show();
                 }
-                //TODO: Parse the string using String.toBytes to get all the individual byte data.
-                Toast.makeText(getApplicationContext(), mReceivedBuffer,
-                        Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    //Newly Added
+    // Check the Printer connection status
+    private boolean checkConnectionStatus(){
+        if(mPrinter != null){
+            return true;
+        }
+        Log.e(TAG, "mPrinter: Null Pointer Exception");
+        Toast.makeText(getApplicationContext(),
+                "Connection is Null",
+                Toast.LENGTH_SHORT).show();
+        return false;
+    }
 
+    //Newly Added
     /**
      * Broadcast Receiver to listen for all the actions specified in the Intent Filter
      */
@@ -957,8 +1081,10 @@ public class MainActivity extends AppCompatActivity {
     private void pickRasterBitImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        //intent.putExtra("crop","true");
-        //intent.putExtra("scale",true);
+        if(Build.VERSION.SDK_INT <=22){
+            intent.putExtra("crop","true");
+            intent.putExtra("scale",true);
+        }
         intent.putExtra("return-data",true);
         startActivityForResult(intent, 2);
     }
@@ -996,27 +1122,38 @@ public class MainActivity extends AppCompatActivity {
         }
         //Raster Bit Image Selection
         else if(requestCode == 2){
-            if(data.getData() != null) {
-                Uri uri = data.getData();
-                Bitmap bitmap = null;
-                try {
-                    bitmap = MediaStore.Images.Media.
-                            getBitmap(getApplicationContext().getContentResolver(), uri);
+            // For API version 22 and below
+            if(Build.VERSION.SDK_INT <= 22){
+                final Bundle extras = data.getExtras();
+                if(extras != null){
+                    //Get Image from Gallery
+                    Bitmap bmp = extras.getParcelable("data");
+                    mPrinter.GS_v(bmp, mModeOfRasterBitEditText.getText().toString());
+                }
+            }
+            // For API version 23 and above
+            else{
+                if(data.getData() != null) {
+                    Uri uri = data.getData();
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.
+                                getBitmap(getApplicationContext().getContentResolver(), uri);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //TODO: Need to check the size of the image
+                    //https://stackoverflow.com/questions/17840521/android-fatal-signal-11-sigsegv-at-0x636f7d89-code-1-how-can-it-be-tracked
+                    if(bitmap.getHeight() <= 700 && bitmap.getWidth() <= 700){
+                        mPrinter.GS_v(bitmap, mModeOfRasterBitEditText.getText().toString());
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),
+                                "Warning! Image Size too big...",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
-                //TODO: Need to check the size of the image
-                //https://stackoverflow.com/questions/17840521/android-fatal-signal-11-sigsegv-at-0x636f7d89-code-1-how-can-it-be-tracked
-                if(bitmap.getHeight() <= 700 && bitmap.getWidth() <= 700){
-                    mPrinter.GS_v(bitmap, mModeOfRasterBitEditText.getText().toString());
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),
-                            "Warning! Image Size too big...",
-                            Toast.LENGTH_SHORT).show();
-                }
-
             }
         }
         //NV Bit Image Selection
@@ -1063,6 +1200,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Invalid!",Toast.LENGTH_SHORT).show();
             }
         }
+
         // TODO: Bluetooth related code - need to shift to library
         if(requestCode == REQUEST_ENABLE_BT){
             Log.i("Info","Request code correct");
@@ -1192,12 +1330,27 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     // Check for other connections, pop up a message, then turn On
                     if(!(ConnectionType.USB.isConnectionState() || ConnectionType.WIFI.isConnectionState())){
+
                         // Enable BT Connection
+                        mBTAdapter = new ArrayAdapter<String>(getApplicationContext(),
+                                android.R.layout.simple_list_item_1,
+                                mBTDevices);
+
+                        mBuilder = new AlertDialog.Builder(MainActivity.this);
+                        mBuilder.setTitle("Select the Device")
+                                .setAdapter(mBTAdapter, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // The 'which' argument contains the index position
+                                        // of the selected item
+                                        connectBt(mBTDevices.get(which));
+                                        invalidateOptionsMenu();
+                                    }
+                                });
+
                         initBT();
 
-                        mPrinter = BT_Printer.getInstance(getApplicationContext(), "NPOS820");
-                        ConnectionType.BT.setConnectionState(true);
-                        mConnectionId = 1;
+                        mBuilder.create();
+                        mBuilder.show();
                     }
                     else{
                         // Pop up message containing the current connection
@@ -1256,6 +1409,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void connectBt(String s) {
+        mPrinter = BT_Printer.getInstance(getApplicationContext(), s);
+        ConnectionType.BT.setConnectionState(true);
+        mConnectionId = 1;
+    }
+
     // Move this to Bluetooth printer
     private void initBT() {
 
@@ -1267,13 +1426,14 @@ public class MainActivity extends AppCompatActivity {
                     "Device doesn't support bluetooth connectivity",
                     Toast.LENGTH_SHORT).show();
             Log.i(TAG, "No bluetooth support for this device");
+
         } else {
             Toast.makeText(getApplicationContext(),
                     "Device support bluetooth connectivity",
                     Toast.LENGTH_SHORT).show();
 
             if (!mBluetoothAdapter.isEnabled()) {
-                Log.i(TAG, "Bluetooth off... Turning on now...");
+                Log.i(TAG, "Bluetooth was off... Turning on now...");
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             } else {
@@ -1289,6 +1449,24 @@ public class MainActivity extends AppCompatActivity {
         intentFilterBT.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         intentFilterBT.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mBTReceiver, intentFilterBT);
+
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+        if(pairedDevices.size() > 0){
+
+            for(BluetoothDevice device : pairedDevices){
+                String deviceName = device.getName(); // BT Device Name
+                String hardwareAddress = device.getAddress(); // MAC Address
+
+                Log.d(TAG, "Device name: " + deviceName);
+                Log.d(TAG, "MAC Address: " + hardwareAddress);
+
+                if(!mBTDevices.contains(deviceName)){
+                    mBTDevices.add(deviceName);
+                }
+            }
+            mBTAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -1442,9 +1620,6 @@ public class MainActivity extends AppCompatActivity {
         if(ConnectionType.WIFI.isConnectionState()){
             ConnectionType.WIFI.setConnectionState(false);
         }
-
         super.onDestroy();
     }
-
-
 }

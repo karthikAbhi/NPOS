@@ -73,8 +73,13 @@ class ConnectThread extends Thread {
         //cancel();
     }
 
-    public void writeData(byte[] writeBuffer) throws IOException{
-        myConnectedThread.write(writeBuffer);
+    public byte[] writeData(byte[] writeBuffer) throws IOException{
+        try{
+            return myConnectedThread.write(writeBuffer);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Closes the client socket and causes the thread to finish.
@@ -82,7 +87,7 @@ class ConnectThread extends Thread {
         try {
             mmSocket.close();
         } catch (IOException e) {
-            Log.e(TAG, "Could not close the client socket", e);
+            Log.e(TAG, "Could not close the connect socket", e);
         }
     }
 }

@@ -46,9 +46,9 @@ public class BT_Printer extends Printer {
     }
 
     @Override
-    public String transfer(byte[] dataToPrintInBytes) {
+    public byte[] transfer(byte[] dataToPrintInBytes) {
         try {
-            mConnectThread.writeData(dataToPrintInBytes);
+            return mConnectThread.writeData(dataToPrintInBytes);
         } catch (IOException e) {
             e.printStackTrace();
         }

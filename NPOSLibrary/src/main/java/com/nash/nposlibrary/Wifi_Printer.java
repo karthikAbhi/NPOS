@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.concurrent.ExecutionException;
 
 public class Wifi_Printer extends Printer {
 
@@ -27,7 +28,9 @@ public class Wifi_Printer extends Printer {
 
     private static boolean mSocketState;
 
-    private String mReceivedBuffer;
+    private byte[] mReceivedBuffer = new byte[16];
+
+    private String readBufferData = "";
 
     // Singleton Design Pattern continued...
     // Constructor to find and initialise the printer connection
@@ -50,9 +53,9 @@ public class Wifi_Printer extends Printer {
     }
 
     @Override
-    public String transfer(byte[] dataToPrintInBytes) {
-        new advancedSendCommandATask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataToPrintInBytes);
-        return null; // TODO: Check this out
+    public byte[] transfer(byte[] dataToPrintInBytes) {
+        new AdvancedSendCommandATask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataToPrintInBytes);
+        return mReceivedBuffer; // TODO: Check this out
     }
 
     @Override
@@ -144,47 +147,31 @@ public class Wifi_Printer extends Printer {
     /**
      * Advanced Asynctask for running the Network related operations - Here, sendCommand to the Printer
      */
-    private class advancedSendCommandATask extends AsyncTask<byte[], String, String>{
+    private class AdvancedSendCommandATask extends AsyncTask<byte[], String, byte[]>{
 
         @Override
-        protected String doInBackground(byte[]... bytes) {
+        protected byte[] doInBackground(byte[]... bytes) {
 
             try {
                 if(mSocket == null){
                     throw new SocketException("Null Socket");
                 }
 
-                String receivedData = sendData(bytes[0]);
-
-                if (receivedData.equals("true")) {
-                    publishProgress(receivedData);
-                } else {
-                    publishProgress(receivedData);
-                    return receivedData;
-                }
+                return sendData(bytes[0]);
 
             } catch (Exception e) {
                 e.printStackTrace();
                 mSocketState = false;
                 // invalidateOptionsMenu();
-                return e.getMessage();
             }
-            return "Success!";
+            return null;
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
-            if(!values[0].equals("true")) {
-                Toast.makeText(mContext.getApplicationContext(),
-                        "Process failed!" + values[0],
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if(!s.equals("Success!")) {
-                Toast.makeText(mContext.getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+        protected void onPostExecute(byte[] s) {
+            if(s[0] != 80) {
+                Toast.makeText(mContext.getApplicationContext(), ""+ s[0]
+                        + s[1] + s[2] + s[3] + s[4] + s[5]+ s[6]+ s[7] +s[8]+s[9], Toast.LENGTH_SHORT).show();
                 mReceivedBuffer = s;
             }
         }
@@ -193,10 +180,10 @@ public class Wifi_Printer extends Printer {
     /**
      *  Read-Write Thread Class
      */
-    public String sendData(byte[] bytes) throws IOException{
+    public byte[] sendData(byte[] bytes) throws IOException{
 
         String success = "false";
-        String tmp = "";
+        byte[] tmp = new byte[16];
 
         int totalLength = bytes.length;
         int numOfPackets = (int) Math.ceil(totalLength/500.0);
@@ -223,12 +210,7 @@ public class Wifi_Printer extends Printer {
                     throw new IOException(e);
                 }
 
-                if(tmp.contains("PRCDONE")) {
-                    return "true";
-                }
-                else {
-                    return tmp;
-                }
+                return tmp;
             }
             // write data above 500 bytes
             else {
@@ -240,7 +222,7 @@ public class Wifi_Printer extends Printer {
                 do {
                     try {
 
-                        tmp = ""; // Reset the read value from the read buffer
+                        readBufferData = ""; // Reset the read value from the read buffer
 
                         mBufferedOutputStream.write(bytes, offset, length);
                         mBufferedOutputStream.flush();
@@ -269,7 +251,7 @@ public class Wifi_Printer extends Printer {
                     }
                     Log.d(TAG, "Write Process: " + "In Progress...!");
 
-                } while (totalLength != offset && tmp.contains("PRCDONE"));
+                } while (totalLength != offset && readBufferData.contains("PRCDONE"));
                 success = "true";
             }
         }
@@ -280,18 +262,16 @@ public class Wifi_Printer extends Printer {
             success = "false";
         }
         Log.d(TAG, "Write Process: " + "Completed!");
-        return success;
+        return tmp;
     }
     // Read data sent by the Printer
-    private String readDataFromBuffer() throws IOException{
+    private byte[] readDataFromBuffer() throws IOException{
 
-        String readBufferData = "";
+        byte[] prcdone = new byte[16];
 
         int len = 0;
 
         try {
-
-            byte[] prcdone = new byte[10];
 
             while(true){
 
@@ -311,6 +291,7 @@ public class Wifi_Printer extends Printer {
                     }
                     else{
                         Log.d(TAG,"Vendor Request Completed!, Status: " + readBufferData);
+                        return prcdone;
                     }
                     break;
                 }
@@ -321,7 +302,7 @@ public class Wifi_Printer extends Printer {
             Log.d(TAG, "In Read method: " + e.getMessage());
             throw new IOException(e);
         }
-        return readBufferData;
+        return prcdone;
     }
 
 }
