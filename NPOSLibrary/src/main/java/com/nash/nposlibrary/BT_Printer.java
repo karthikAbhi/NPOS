@@ -1,5 +1,12 @@
 package com.nash.nposlibrary;
 
+/**
+ * Created by Karthik Raj K on 14/8/19.
+ * Project: NPOS
+ * Copyright (c) 2019 NASH Industries India Pvt. Ltd. All rights reserved.
+ */
+
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -74,6 +81,11 @@ public class BT_Printer extends Printer {
 
     @Override
     public void closeConnection() {
-        mConnectThread.cancel();
+        try{
+            mConnectThread.cancel();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

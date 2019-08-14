@@ -1,5 +1,11 @@
 package com.nash.npos;
 
+/**
+ * Created by Karthik Raj K on 14/8/19.
+ * Project: NPOS
+ * Copyright (c) 2019 NASH Industries India Pvt. Ltd. All rights reserved.
+ */
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ClipData;
@@ -77,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
     // --- UI - Button References ---
 
+    private Button mTestPrintButton;
+
     private Button mPrintButton;
     private Button mLFCommandButton;
     private Button mFFCommandButton;
@@ -110,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mPrintBarcodeButton;
     private Button mSetPrintDensity;
     private Button mInformSysTimeOfHostCommandButton;
-    private Button mPrintBitImageCommandButton;
+    //private Button mPrintBitImageCommandButton;
     private Button mPrintRasterBitImageCommandButton;
     private Button mPrintNVBitImageCommandButton;
     private Button mSelectNVBitImageCommandButton;
@@ -279,6 +287,8 @@ public class MainActivity extends AppCompatActivity {
         mSCMCPEditText = findViewById(R.id.selectCutModeCutPaperEditText);
 
         // --- UI Components - Button Reference Creation ---
+        // Test Print Button
+        mTestPrintButton = findViewById(R.id.btn_testprint);
         //Print Text
         mPrintButton = findViewById(R.id.printButton);
         //Print Barcode
@@ -326,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
         //Set the vertical logical position in page mode (14.22)
         mSetVerticalLogicalPositionOnPageModeCommandButton = findViewById(R.id.setVLPOnPageModeButton);
         //Print bit image (14.23)
-        mPrintBitImageCommandButton = findViewById(R.id.printBitImageButton);
+        //mPrintBitImageCommandButton = findViewById(R.id.printBitImageButton);
         //Print raster bit image (14.24)
         mPrintRasterBitImageCommandButton = findViewById(R.id.printRasterBitImageButton);
         //Print NV Bit Image (14.25)
@@ -412,6 +422,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // --- IMPLEMENTATION ---
+
+        // Test Print Command
+        mTestPrintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkConnectionStatus()){
+                    mPrinter.transfer(new byte[]{0x12, 0x54});
+                }
+            }
+        });
 
         //Basic Print Command
         mPrintButton.setOnClickListener(new View.OnClickListener() {
@@ -624,14 +644,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         //Print bit image (14.23)
-        mPrintBitImageCommandButton.setOnClickListener(new View.OnClickListener() {
+        /*mPrintBitImageCommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(checkConnectionStatus()) {
                     pickBitImage();
                 }
             }
-        });
+        });*/
 
         //Print raster bit image (14.24)
         mPrintRasterBitImageCommandButton.setOnClickListener(new View.OnClickListener() {

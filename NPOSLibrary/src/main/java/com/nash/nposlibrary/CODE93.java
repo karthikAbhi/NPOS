@@ -1,5 +1,12 @@
 package com.nash.nposlibrary;
 
+/**
+ * Created by Karthik Raj K on 14/8/19.
+ * Project: NPOS
+ * Copyright (c) 2019 NASH Industries India Pvt. Ltd. All rights reserved.
+ */
+
+
 public abstract class CODE93 {
     public static final int[][] code93model = new int[][]{
             {0,	44,	30},

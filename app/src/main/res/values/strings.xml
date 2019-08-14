@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NPOS</string>
+    <string name="app_name">NPOS SDK</string>
     <string name="menu_usb_connection">USB</string>
     <string name="menu_bt_connection">Bluetooth</string>
     <string name="menu_wifi_connection">Wi-Fi</string>

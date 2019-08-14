@@ -1,5 +1,11 @@
 package com.nash.nposlibrary;
 
+/**
+ * Created by Karthik Raj K on 14/8/19.
+ * Project: NPOS
+ * Copyright (c) 2019 NASH Industries India Pvt. Ltd. All rights reserved.
+ */
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,7 +18,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
-import java.util.concurrent.ExecutionException;
 
 public class Wifi_Printer extends Printer {
 
@@ -65,7 +70,12 @@ public class Wifi_Printer extends Printer {
 
     @Override
     public void closeConnection() {
-        closeSocket();
+        try{
+            closeSocket();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     private void closeSocket() {

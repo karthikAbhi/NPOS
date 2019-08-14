@@ -1,5 +1,11 @@
 package com.nash.nposlibrary;
 
+/**
+ * Created by Karthik Raj K on 14/8/19.
+ * Project: NPOS
+ * Copyright (c) 2019 NASH Industries India Pvt. Ltd. All rights reserved.
+ */
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -56,6 +62,8 @@ public abstract class Printer {
             printerInput = dataToPrintInString.getBytes("UTF-8");
             transfer(printerInput);
         } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (Exception e){
             e.printStackTrace();
         }
     }

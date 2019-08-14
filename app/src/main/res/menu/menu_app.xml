@@ -9,13 +9,15 @@
     <item android:id="@+id/menu_bt_connection"
         android:icon="@drawable/ic_bluetooth_white_24dp"
         android:title="@string/menu_bt_connection"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        android:visible="false"/>
     <item android:id="@+id/menu_wifi_connection"
         android:icon="@drawable/ic_wifi_white_24dp"
         android:title="@string/menu_wifi_connection"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        android:visible="false"/>
     <item android:id="@+id/menu_app_close"
         android:title="@string/menu_close_app"
         android:tooltipText="Close the app"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 </menu>
