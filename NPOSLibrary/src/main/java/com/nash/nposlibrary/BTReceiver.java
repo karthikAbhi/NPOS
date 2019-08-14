@@ -1,5 +1,12 @@
 package com.nash.nposlibrary;
 
+/**
+ * Created by Karthik Raj K on 14/8/19.
+ * Project: NPOS
+ * Copyright (c) 2019 NASH Industries India Pvt. Ltd. All rights reserved.
+ */
+
+
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -50,7 +57,6 @@ public abstract class BTReceiver extends BroadcastReceiver {
                             .show();
                 }
             }*/
-            disconnect();
         }
         else{
             Toast.makeText(context,"Something is broadcasted!" + intent.getAction(),
